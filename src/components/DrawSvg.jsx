@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import Vector from "../Icons/Vector";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
@@ -19,6 +19,15 @@ const VectorContainer = styled.div`
   }
 `;
 
+const Bounce = keyframes`
+  from {
+    transform: translateX(-50%) scale(0.5);
+  }
+  to {
+    transform: translateX(-50%) scale(1);
+  }
+`;
+
 const Ball = styled.div`
   position: absolute;
   top: 0.5rem;
@@ -27,10 +36,13 @@ const Ball = styled.div`
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 50%;
+  background-color: ${(props) => props.theme.text};
+  animation: ${Bounce} 0.5s linear infinite alternate;
 `;
 
 const DrawSvg = () => {
   const ref = useRef(null);
+  const ballRef = useRef(null);
   gsap.registerPlugin(ScrollTrigger);
   useLayoutEffect(() => {
     let element = ref.current;
@@ -55,14 +67,25 @@ const DrawSvg = () => {
           // also reverse the drawing when scroll goes up
           svg.style.strokeDashoffset = length - draw;
         },
+        onToggle: (self) => {
+          if (self.isActive) {
+            // console.log("Scroll is Active");
+            ballRef.current.style.display = "none";
+          } else {
+            // console.log("Scroll is not Active");
+            ballRef.current.style.display = "inline-block";
+          }
+        },
       },
     });
 
-    return () => {};
+    return () => {
+      if (t1) t1.kill();
+    };
   }, []);
   return (
     <>
-      <Ball />
+      <Ball ref={ballRef} />
       <VectorContainer ref={ref}>
         <Vector />
       </VectorContainer>
