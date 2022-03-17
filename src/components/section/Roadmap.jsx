@@ -1,4 +1,6 @@
-import React, { useRef } from "react";
+import gsap from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
+import React, { useLayoutEffect, useRef } from "react";
 import styled from "styled-components";
 import DrawSvg from "../DrawSvg";
 
@@ -125,11 +127,37 @@ const RoadMapItem = ({ title, subtext, addToRef }) => {
 const Roadmap = () => {
   const revealRefs = useRef([]);
   revealRefs.current = [];
+  gsap.registerPlugin(ScrollTrigger);
   const addToRefs = (el) => {
     if (el && !revealRefs.current.includes(el)) {
       revealRefs.current.push(el);
     }
   };
+  useLayoutEffect(() => {
+    let t1 = gsap.timeline();
+    revealRefs.current.forEach((el, index) => {
+      t1.fromTo(
+        el.childNodes[0],
+        {
+          y: "0",
+        },
+        {
+          y: "-30%",
+          scrollTrigger: {
+            id: `section-${index + 1}`,
+            trigger: el,
+            start: "top center+=200px",
+            end: "bottom center",
+            scrub: true,
+            // markers: true,
+          },
+        }
+      );
+    });
+
+    return () => {};
+  }, []);
+
   return (
     <Section>
       <Title>Roadmap</Title>
