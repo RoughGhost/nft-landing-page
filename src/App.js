@@ -10,6 +10,7 @@ import {
   Faq,
 } from "./components/section";
 import { Navigation, Footer } from "./components";
+import ScrollToTop from "./components/ScrollToTop";
 function App() {
   return (
     <>
@@ -23,6 +24,7 @@ function App() {
         <Team />
         <Faq />
         <Footer />
+        <ScrollToTop />
       </ThemeProvider>
     </>
   );
